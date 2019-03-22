@@ -13,8 +13,10 @@ class ButtonHelper(object):
 			call(["dir", "&&","cd", "pet_dash", "&&", "cd", "static", "&&", "cd", "model", "&&", bat_name, "&&", "dir"], shell=True)
 		else:
 			analyzer_page = dashboard.analyzer()
-			curdoc.clear()
-			curdoc.add_root(analyzer_page)
+			print("post analyzer")
+			curdoc().clear()
+			print("clear")
+			curdoc().add_root(analyzer_page)
 
 		#print(call(["dir && cd pet_dash/static/model && dir"], shell=True))
 

@@ -19,22 +19,22 @@ from bokeh import events
 import datetime
 
 def update_mf(mfs, skus, cf_orders, bins, bins_waste):
-		for mf in mfs:
-			scode = mfs[mf].skus[0]
-			for cf in filter(lambda x: x in cf_orders, skus[scode].get_cfs()):
-				for order in cf_orders[cf]:
-					order.update_mf(mf)
-				for b in bins:
-					if bins[b].code == cf:
-						bins[b].update_mf(mf)
-		mfs = []
-		for row, val in  out_bins_waste.iterrows():
-			if(val["cf code"] != "None"):
-				mf = cf_orders[val["cf code"]][0].master_code
-				mfs.append(mf)
-			else:
-				mfs.append("None")
-		out_bins_waste["master_code"] = mfs
+	for mf in mfs:
+		scode = mfs[mf].skus[0]
+		for cf in filter(lambda x: x in cf_orders, skus[scode].get_cfs()):
+			for order in cf_orders[cf]:
+				order.update_mf(mf)
+			for b in bins:
+				if bins[b].code == cf:
+					bins[b].update_mf(mf)
+	mfs = []
+	for row, val in  bins_waste.iterrows():
+		if(val["cf code"] != "None"):
+			mf = cf_orders[val["cf code"]][0].master_code
+			mfs.append(mf)
+		else:
+			mfs.append("None")
+	bins_waste["master_code"] = mfs
 	
 def analyzer():
 	# INPUT
@@ -71,10 +71,10 @@ def analyzer():
 	##
 	#THIS NEEDS TO BE RE ADDED, WHY WAS IT DELETED?
 	##
-	#idx_to_drop = out_bins_waste[out_bins_waste["cf code"] == "None"].index
+	idx_to_drop = out_bins_waste[out_bins_waste["cf code"] == "None"].index
 	 
 	# Delete these row indexes from dataFrame
-	#out_bins_waste.drop(idx_to_drop , inplace=True)
+	out_bins_waste.drop(idx_to_drop , inplace=True)
 
 	out_cf.set_index('cf code', inplace = True)
 	#out_cf_orders.set_index('code', inplace = True)
@@ -90,6 +90,8 @@ def analyzer():
 	big_mfs = fill_mf(big_skus, breakout)
 	big_bins = fill_bins(out_bins, out_bins_waste)
 
+	print("filled the bigs")
+
 	update_mf(big_mfs, big_skus, big_cf_orders, big_bins, out_bins_waste)
 
 	print("Objects are ready")
@@ -102,11 +104,10 @@ def analyzer():
 
 	print("ocuppation is ready")
 	sim_widget = add_mf_similarities_widgetobox(dic_mf_similarities)
-	#curdoc().clear()
+	
 	print("similarity widget ready")
 	occupation_layout = layout([
 	  	[occupation_fig, sim_widget]
-	])#, sizing_mode='stretch_both')
+	])
 	return occupation_layout
-	#curdoc().add_root(occupation_layout)
 
